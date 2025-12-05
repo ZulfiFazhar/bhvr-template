@@ -1,90 +1,141 @@
-# React + Vite + Hono + Cloudflare Workers
+<div align="center">
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/vite-react-template)
+# BHVR Template (Bun Hono Vite React)
 
-This template provides a minimal setup for building a React application with TypeScript and Vite, designed to run on Cloudflare Workers. It features hot module replacement, ESLint integration, and the flexibility of Workers deployments.
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ZulfiFazhar/bhvr-template)
 
-![React + TypeScript + Vite + Cloudflare Workers](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/fc7b4b62-442b-4769-641b-ad4422d74300/public)
+![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)
+![Hono](https://img.shields.io/badge/Hono-v4.10.7-E36002?style=for-the-badge&logo=hono&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-v6.0.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-v19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
-<!-- dash-content-start -->
+![Screenshot](public/screenshot.png)
 
-🚀 Supercharge your web development with this powerful stack:
+</div>
 
-- [**React**](https://react.dev/) - A modern UI library for building interactive interfaces
-- [**Vite**](https://vite.dev/) - Lightning-fast build tooling and development server
-- [**Hono**](https://hono.dev/) - Ultralight, modern backend framework
-- [**Cloudflare Workers**](https://developers.cloudflare.com/workers/) - Edge computing platform for global deployment
+This project is a **BHVR Template**, a powerful and modern starter kit combining **Bun**, **Hono**, **Vite**, and **React**. It is designed to provide a lightning-fast development experience and high-performance production builds, optimized for Cloudflare Workers.
 
-### ✨ Key Features
+## � Project Structure
 
-- 🔥 Hot Module Replacement (HMR) for rapid development
-- 📦 TypeScript support out of the box
-- 🛠️ ESLint configuration included
-- ⚡ Zero-config deployment to Cloudflare's global network
-- 🎯 API routes with Hono's elegant routing
-- 🔄 Full-stack development setup
-- 🔎 Built-in Observability to monitor your Worker
+Here's an overview of the project's file structure:
 
-Get started in minutes with local development or deploy directly via the Cloudflare dashboard. Perfect for building modern, performant web applications at the edge.
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-To start a new project with this template, run:
-
-```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/vite-react-template
+```
+bhvr-template/
+├── .wrangler/               # Local Wrangler state (do not commit)
+├── dist/                    # Production build output
+│   └── client/              # Static assets for the frontend
+├── public/                  # Public static assets
+├── src/
+│   ├── react-app/           # React frontend application
+│   │   ├── components/      # Reusable UI components
+│   │   ├── App.tsx          # Main React component
+│   │   └── main.tsx         # React entry point
+│   └── worker/              # Cloudflare Worker (Hono backend)
+│       └── index.ts         # Worker entry point
+├── .gitignore               # Git ignore rules
+├── bun.lock                 # Bun lockfile
+├── package.json             # Project dependencies and scripts
+├── tsconfig.json            # TypeScript configuration
+├── vite.config.ts           # Vite configuration
+└── wrangler.json            # Cloudflare Workers configuration
 ```
 
-A live deployment of this template is available at:
-[https://react-vite-template.templates.workers.dev](https://react-vite-template.templates.workers.dev)
+## �🛠️ Tech Stack Deep Dive
 
-## Development
+This template leverages a cutting-edge stack to ensure maximum performance and developer productivity:
 
-Install dependencies:
+- **[Bun](https://bun.sh/)**: A fast all-in-one JavaScript runtime, bundler, and package manager. It replaces Node.js and npm, offering significantly faster install times and script execution.
+- **[Hono](https://hono.dev/)**: An ultrafast web framework specifically designed for Edge environments like Cloudflare Workers. It handles routing and API logic with minimal overhead.
+- **[Vite](https://vitejs.dev/)**: Next Generation Frontend Tooling. It provides an instant dev server with Hot Module Replacement (HMR) and optimized production builds.
+- **[React](https://react.dev/)**: The industry-standard library for building interactive user interfaces.
+- **[Cloudflare Workers](https://workers.cloudflare.com/)**: A serverless execution environment that runs your code on Cloudflare's global network, ensuring low latency for users worldwide.
 
-```bash
-npm install
-```
+## ⚙️ Configuration
 
-Start the development server with:
+### `wrangler.json`
 
-```bash
-npm run dev
-```
+This file configures your Cloudflare Worker.
 
-Your application will be available at [http://localhost:5173](http://localhost:5173).
+- **`compatibility_flags`**: set to `["nodejs_compat"]` to enable Node.js compatibility APIs in the runtime.
+- **`observability`**: Enabled by default to provide logs and metrics.
+- **`assets`**: Configures the worker to serve static assets from the `./dist/client` directory, enabling a Single Page Application (SPA) experience.
 
-## Production
+### `vite.config.ts`
 
-Build your project for production:
+Vite is configured with `@cloudflare/vite-plugin` to seamlessly integrate with the Cloudflare Workers environment during development and building.
 
-```bash
-npm run build
-```
+## 🚀 Getting Started
 
-Preview your build locally:
+Follow these steps to get your project up and running using `bun`.
 
-```bash
-npm run preview
-```
+### Prerequisites
 
-Deploy your project to Cloudflare Workers:
+Make sure you have [Bun](https://bun.sh/) installed on your machine.
 
 ```bash
-npm run build && npm run deploy
+curl -fsSL https://bun.sh/install | bash
 ```
 
-Monitor your workers:
+### Installation
+
+1.  **Clone the repository**
+
+    ```bash
+    git clone https://github.com/ZulfiFazhar/bhvr-template.git
+    cd bhvr-template
+    ```
+
+2.  **Install dependencies**
+
+    ```bash
+    bun install
+    ```
+
+### Development
+
+Start the development server with hot reloading:
 
 ```bash
-npx wrangler tail
+bun run dev
 ```
 
-## Additional Resources
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Backend (Worker)**: The worker logic is integrated into the dev server.
 
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Vite Documentation](https://vitejs.dev/guide/)
-- [React Documentation](https://reactjs.org/)
-- [Hono Documentation](https://hono.dev/)
+### Production
+
+Build the application for production:
+
+```bash
+bun run build
+```
+
+This command compiles both the React application (via Vite) and the Worker code (via `tsc`).
+
+### Deployment
+
+Deploy your application to Cloudflare Workers:
+
+```bash
+bun run deploy
+```
+
+This will upload your worker and static assets to Cloudflare.
+
+### Preview
+
+Preview the production build locally before deploying:
+
+```bash
+bun run preview
+```
+
+## 📜 Scripts
+
+- `dev`: Starts the local development server.
+- `build`: Builds the project for production (TypeScript check + Vite build).
+- `deploy`: Deploys the project to Cloudflare Workers.
+- `preview`: Builds the project and starts a local preview server.
+- `lint`: Runs ESLint to check for code quality issues.
+- `check`: Runs a full check (type check, build, and dry-run deploy).
