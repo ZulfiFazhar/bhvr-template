@@ -7,6 +7,8 @@ export default function UserPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState("");
 
   useEffect(() => {
     fetchUsers();
@@ -38,6 +40,46 @@ export default function UserPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      setLoading(true);
+      await userService.deleteUser(id);
+      setUsers(users.filter((user) => user.id !== id));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (user: User) => {
+    setEditingId(user.id);
+    setEditingName(user.name);
+  };
+
+  const handleUpdate = async (id: number) => {
+    if (!editingName.trim()) return;
+
+    try {
+      setLoading(true);
+      const updatedUser = await userService.updateUser(id, editingName);
+      setUsers(users.map((u) => (u.id === id ? updatedUser : u)));
+      setEditingId(null);
+      setEditingName("");
+    } catch (error) {
+      console.error("Error updating user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingName("");
   };
 
   return (
@@ -81,9 +123,61 @@ export default function UserPage() {
             {users.map((user) => (
               <li
                 key={user.id}
-                className="border border-gray-200 rounded p-3 hover:bg-gray-50 hover:text-black"
+                className="border border-gray-200 rounded p-3 hover:bg-gray-50 hover:text-black flex justify-between items-center"
               >
-                <span className="font-semibold">#{user.id}</span> - {user.name}
+                {editingId === user.id ? (
+                  <>
+                    <div className="flex gap-2 items-center flex-1">
+                      <span className="font-semibold">#{user.id}</span>
+                      <input
+                        type="text"
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        className="border border-blue-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 mr-4"
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleUpdate(user.id)}
+                        disabled={loading || !editingName.trim()}
+                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        disabled={loading}
+                        className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <span className="font-semibold">#{user.id}</span> -{" "}
+                      {user.name}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(user)}
+                        disabled={loading}
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        disabled={loading}
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>

@@ -10,4 +10,24 @@ function getUsers() {
   return userData;
 }
 
-export { addUser, getUsers };
+function getUserById(id: number) {
+  return userData.find((user) => user.id === id);
+}
+
+function updateUser(id: number, name: string) {
+  const user = userData.find((user) => user.id === id);
+  if (user) {
+    user.name = name;
+    return user;
+  }
+  return null;
+}
+
+function removeUser(id: number) {
+  const index = userData.findIndex((user) => user.id === id);
+  if (index !== -1) {
+    userData.splice(index, 1);
+  }
+}
+
+export { addUser, getUsers, getUserById, updateUser, removeUser };
