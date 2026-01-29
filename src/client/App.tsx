@@ -1,8 +1,8 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+import reactLogo from "@client/assets/react.svg";
 import viteLogo from "/vite.svg";
-import cloudflareLogo from "./assets/Cloudflare_Logo.svg";
-import honoLogo from "./assets/hono.svg";
+import cloudflareLogo from "@client/assets/Cloudflare_Logo.svg";
+import honoLogo from "@client/assets/hono.svg";
 
 import { Link } from "react-router";
 
@@ -89,7 +89,7 @@ function App() {
           <p className="mt-4">
             Edit{" "}
             <code className="bg-zinc-800 dark:bg-zinc-200 dark:text-zinc-900 px-1 rounded">
-              worker/index.ts
+              server/index.ts
             </code>{" "}
             to change the name
           </p>

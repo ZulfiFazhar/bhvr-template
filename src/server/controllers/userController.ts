@@ -5,7 +5,7 @@ import {
   getUserById,
   updateUser,
   removeUser,
-} from "../services/userService";
+} from "@server/services/userService";
 
 async function createUserController(c: Context) {
   const { name } = await c.req.json();

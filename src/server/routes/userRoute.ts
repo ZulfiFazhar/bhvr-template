@@ -5,7 +5,7 @@ import {
   getUserByIdController,
   updateUserController,
   removeUserController,
-} from "../controllers/userController";
+} from "@server/controllers/userController";
 
 const userRoute = new Hono<{ Bindings: Env }>();
 

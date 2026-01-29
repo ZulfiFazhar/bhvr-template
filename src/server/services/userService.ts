@@ -1,4 +1,4 @@
-import { userData } from "../repositories/userRepository";
+import { userData } from "@server/repositories/userRepository";
 
 function addUser(name: string) {
   const newUser = { id: userData.length + 1, name };

@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 
 import { useState, useEffect } from "react";
-import { userService, type User } from "../../services/userService";
+import { userService, type User } from "@client/services/userService";
 
 export default function UserPage() {
   const [users, setUsers] = useState<User[]>([]);

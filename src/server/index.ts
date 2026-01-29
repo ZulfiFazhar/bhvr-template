@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import userRoute from "./routes/userRoute";
+import userRoute from "@server/routes/userRoute";
 
 const app = new Hono<{ Bindings: Env }>();
 
