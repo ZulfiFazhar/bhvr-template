@@ -1,9 +1,8 @@
 import { Hono } from "hono";
-import userRoute from "@server/routes/userRoute";
+import routes from "@server/routes";
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.get("/api/", (c) => c.json({ name: "Cloudflare" }));
-app.route("/api/users", userRoute);
+app.route("/", routes);
 
 export default app;

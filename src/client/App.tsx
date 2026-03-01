@@ -72,7 +72,7 @@ function App() {
         <div className="flex flex-col justify-center items-center gap-2 p-8">
           <button
             onClick={() => {
-              fetch("/api/")
+              fetch("/api/name")
                 .then((res) => res.json() as Promise<{ name: string }>)
                 .then((data) => setName(data.name));
             }}

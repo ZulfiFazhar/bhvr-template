@@ -1,52 +1,42 @@
 import type { Context } from "hono";
-import {
-  addUser,
-  getUsers,
-  getUserById,
-  updateUser,
-  removeUser,
-} from "@server/services/userService";
+import { userService } from "@server/services/userService";
 
-async function createUserController(c: Context) {
-  const { name } = await c.req.json();
-  const newUser = addUser(name);
-  return c.json(newUser, 201);
+class UserController {
+  createUser = async (c: Context) => {
+    const { name } = await c.req.json();
+    const newUser = userService.addUser(name);
+    return c.json(newUser, 201);
+  };
+
+  getUsers = (c: Context) => {
+    const users = userService.getUsers();
+    return c.json(users);
+  };
+
+  getUserById = (c: Context) => {
+    const id = Number(c.req.param("id"));
+    const user = userService.getUserById(id);
+    if (!user) {
+      return c.json({ error: "User not found" }, 404);
+    }
+    return c.json(user);
+  };
+
+  updateUser = async (c: Context) => {
+    const id = Number(c.req.param("id"));
+    const { name } = await c.req.json();
+    const updatedUser = userService.updateUser(id, name);
+    if (!updatedUser) {
+      return c.json({ error: "User not found" }, 404);
+    }
+    return c.json(updatedUser);
+  };
+
+  removeUser = (c: Context) => {
+    const id = Number(c.req.param("id"));
+    userService.removeUser(id);
+    return c.json({ message: "User removed" });
+  };
 }
 
-function getUsersController(c: Context) {
-  const users = getUsers();
-  return c.json(users);
-}
-
-function getUserByIdController(c: Context) {
-  const id = Number(c.req.param("id"));
-  const user = getUserById(id);
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
-  }
-  return c.json(user);
-}
-
-async function updateUserController(c: Context) {
-  const id = Number(c.req.param("id"));
-  const { name } = await c.req.json();
-  const updatedUser = updateUser(id, name);
-  if (!updatedUser) {
-    return c.json({ error: "User not found" }, 404);
-  }
-  return c.json(updatedUser);
-}
-
-function removeUserController(c: Context) {
-  const id = Number(c.req.param("id"));
-  removeUser(id);
-  return c.json({ message: "User removed" });
-}
-
-export {
-  createUserController,
-  getUsersController,
-  getUserByIdController,
-  updateUserController,
-  removeUserController,
-};
+export const userController = new UserController();

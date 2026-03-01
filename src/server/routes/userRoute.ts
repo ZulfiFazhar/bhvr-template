@@ -1,18 +1,12 @@
 import { Hono } from "hono";
-import {
-  createUserController,
-  getUsersController,
-  getUserByIdController,
-  updateUserController,
-  removeUserController,
-} from "@server/controllers/userController";
+import { userController } from "@server/controllers/userController";
 
 const userRoute = new Hono<{ Bindings: Env }>();
 
-userRoute.get("/", getUsersController);
-userRoute.post("/", createUserController);
-userRoute.get("/:id", getUserByIdController);
-userRoute.put("/:id", updateUserController);
-userRoute.delete("/:id", removeUserController);
+userRoute.get("/", userController.getUsers);
+userRoute.post("/", userController.createUser);
+userRoute.get("/:id", userController.getUserById);
+userRoute.put("/:id", userController.updateUser);
+userRoute.delete("/:id", userController.removeUser);
 
 export default userRoute;
