@@ -6,6 +6,11 @@
     { "path": "./tsconfig.worker.json" }
   ],
   "compilerOptions": {
+    "types": ["@types/bun"],
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "strict": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

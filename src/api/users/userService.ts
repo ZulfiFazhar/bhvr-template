@@ -1,25 +1,25 @@
 import { userRepository } from "./userRepository";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 class UserService {
-  addUser(name: string) {
-    const newUser = { id: userRepository.count() + 1, name };
-    return userRepository.add(newUser);
+  async addUser(db: DrizzleD1Database, name: string) {
+    return await userRepository.add(db, name);
   }
 
-  getUsers() {
-    return userRepository.getAll();
+  async getUsers(db: DrizzleD1Database) {
+    return await userRepository.getAll(db);
   }
 
-  getUserById(id: number) {
-    return userRepository.findById(id);
+  async getUserById(db: DrizzleD1Database, id: number) {
+    return await userRepository.findById(db, id);
   }
 
-  updateUser(id: number, name: string) {
-    return userRepository.update(id, name);
+  async updateUser(db: DrizzleD1Database, id: number, name: string) {
+    return await userRepository.update(db, id, name);
   }
 
-  removeUser(id: number) {
-    return userRepository.remove(id);
+  async removeUser(db: DrizzleD1Database, id: number) {
+    return await userRepository.remove(db, id);
   }
 }
 

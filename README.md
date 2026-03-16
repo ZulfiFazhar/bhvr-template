@@ -24,22 +24,21 @@ Here's an overview of the project's file structure:
 bhvr-template/
 ├── public/                  # Public static assets
 ├── src/
-│   ├── client/              # React frontend application (Vite + React Router)
-│   │   ├── assets/          # Images, icons, SVGs
-│   │   ├── pages/           # Page components (user/, etc.)
-│   │   ├── routes/          # React Router configuration
-│   │   ├── services/        # API service layers
-│   │   ├── App.tsx          # Main landing page component
-│   │   ├── main.tsx         # React + Router entry point
-│   │   └── index.css        # Global styles (Tailwind CSS)
-│   └── server/              # Cloudflare Worker (Hono backend)
-│       ├── controllers/     # Request handlers (userController.ts)
-│       ├── repositories/    # Data access layer (userRepository.ts)
-│       ├── routes/          # Route definitions (userRoute.ts)
-│       ├── services/        # Business logic (userService.ts)
-│       └── index.ts         # Worker entry point
+│   ├── api/                 # Cloudflare Worker (Hono backend API)
+│   │   ├── users/           # User feature (controllers, repositories, routes, services)
+│   │   └── index.ts         # Worker entry point
+│   ├── assets/              # Images, icons, SVGs for frontend
+│   ├── database/            # Database configuration and schemas
+│   ├── lib/                 # Shared utilities and libraries
+│   ├── routes/              # React Router configuration and page components
+│   ├── services/            # Frontend API service layers
+│   ├── index.css            # Global styles (Tailwind CSS)
+│   ├── main.tsx             # React + Router entry point
+│   └── routeTree.gen.ts     # Auto-generated routing tree map
+├── .env.example             # Environment variables template
 ├── .gitignore               # Git ignore rules
 ├── bun.lock                 # Bun lockfile
+├── drizzle.config.ts        # Drizzle ORM configuration
 ├── package.json             # Project dependencies and scripts
 ├── tsconfig.json            # TypeScript project references
 ├── tsconfig.app.json        # Frontend TypeScript config
@@ -58,7 +57,9 @@ This template leverages a cutting-edge stack to ensure maximum performance and d
 - **[React](https://react.dev/)**: The industry-standard library for building interactive user interfaces.
 - **[React Router](https://reactrouter.com/)**: Declarative client-side routing for React applications.
 - **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework for rapid UI development.
+- **[Drizzle ORM](https://orm.drizzle.team/)**: A lightweight, headless TypeScript ORM for secure and predictable database interactions.
 - **[Cloudflare Workers](https://workers.cloudflare.com/)**: A serverless execution environment that runs your code on Cloudflare's global network, ensuring low latency for users worldwide.
+- **[Cloudflare D1](https://developers.cloudflare.com/d1/)**: Cloudflare's native serverless SQL database, tightly integrated with Workers.
 
 ## Configuration
 
@@ -70,6 +71,7 @@ This file configures your Cloudflare Worker.
 - **`compatibility_flags`**: Set to `["nodejs_compat"]` to enable Node.js compatibility APIs in the runtime
 - **`observability`**: Enabled by default to provide logs and metrics
 - **`assets`**: Configures the worker to serve static assets from `./dist/client` with SPA fallback routing
+- **`d1_databases`**: Binds the Cloudflare D1 database for serverless SQL storage
 
 ### `vite.config.ts`
 
@@ -112,6 +114,29 @@ curl -fsSL https://bun.sh/install | bash
 
     ```bash
     bun install
+    ```
+
+3.  **Configure Environment Variables (Cloudflare D1)**
+
+    Start by making a copy of `.env.example` to your `.env` file:
+
+    ```bash
+    cp .env.example .env
+    bunx wrangler d1 create <DATABASE_NAME>
+    ```
+
+    You can find `accountId`, `databaseId`, and `token` in the Cloudflare dashboard:
+    - To get `accountId`, go to **Workers & Pages** -> **Overview** -> copy **Account ID** from the right sidebar.
+    - To get `databaseId`, open the D1 database you want to connect to and copy the **Database ID**.
+    - To get `token`, go to **My profile** -> **API Tokens** and create a token with **D1 edit** permissions.
+
+    After you have configured the `drizzle.config.ts` file, Drizzle Kit lets you run `migrate`, `push`, `introspect`, and `studio` commands using the Cloudflare D1 HTTP API.
+
+4.  **Run Migrations**
+
+    ```bash
+    bunx drizzle-kit generate
+    bunx drizzle-kit migrate
     ```
 
 ### Development
@@ -181,12 +206,13 @@ bun run preview
   - **Repositories**: Manage data persistence
 - Path aliases (`@api/*`) for clean imports
 - Node.js compatibility enabled for broader API support
+- **Database**: Fully integrates Cloudflare D1 using Drizzle ORM (`src/database/`)
 
 ### Example: User Feature
 
 The template includes a complete CRUD implementation for user management:
 
-- Frontend: `src/client/pages/user/`, `src/client/services/userService.tsx`
-- Backend: `src/server/routes/userRoute.ts` → `controllers/userController.ts` → `services/userService.ts` → `repositories/userRepository.ts`
+- Frontend: `src/routes/user.tsx`, `src/services/userService.tsx`
+- Backend: `src/api/users/userRoute.ts` → `src/api/users/userController.ts` → `src/api/users/userService.ts` → `src/api/users/userRepository.ts`
 
 This demonstrates the recommended pattern for adding new features to your application.

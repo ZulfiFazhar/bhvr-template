@@ -5,29 +5,38 @@ type User = {
   name: string;
 };
 
+export type ApiResponse<T> = {
+  message: string;
+  data: T;
+};
+
 export const userService = {
   async getUsers(): Promise<User[]> {
-    return http.get(api.users.getAll).json<User[]>();
+    const response = await http.get(api.users.getAll).json<ApiResponse<User[]>>();
+    return response.data;
   },
 
   async getUser(id: number): Promise<User> {
-    return http.get(api.users.getOne(id)).json<User>();
+    const response = await http.get(api.users.getOne(id)).json<ApiResponse<User>>();
+    return response.data;
   },
 
   async createUser(name: string): Promise<User> {
-    return http
+    const response = await http
       .post(api.users.create, {
         json: { name },
       })
-      .json<User>();
+      .json<ApiResponse<User>>();
+    return response.data;
   },
 
   async updateUser(id: number, name: string): Promise<User> {
-    return http
+    const response = await http
       .put(api.users.update(id), {
         json: { name },
       })
-      .json<User>();
+      .json<ApiResponse<User>>();
+    return response.data;
   },
 
   async deleteUser(id: number): Promise<void> {

@@ -78,8 +78,8 @@ function Index() {
             onClick={() => {
               http
                 .get("name")
-                .json<{ name: string }>()
-                .then((data) => setName(data.name));
+                .json<{ message: string; data: { name: string } }>()
+                .then((response) => setName(response.data.name));
             }}
             aria-label="get name"
             className="rounded-lg border border-zinc-700 dark:border-zinc-300 px-5 py-2.5 text-base font-medium bg-zinc-800 dark:bg-zinc-200 text-white cursor-pointer transition-all duration-250 hover:border-blue-500 focus:outline focus:outline-blue-500 w-fit"

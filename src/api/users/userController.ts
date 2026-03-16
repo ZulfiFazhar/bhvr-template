@@ -1,41 +1,52 @@
 import type { Context } from "hono";
 import { userService } from "./userService";
+import { getDb, type Env } from "../../database/db";
+import {
+  responseCreated,
+  responseNotFound,
+  responseOK,
+} from "../utils/response";
 
 class UserController {
-  createUser = async (c: Context) => {
+  createUser = async (c: Context<{ Bindings: Env }>) => {
+    const db = getDb(c.env);
     const { name } = await c.req.json();
-    const newUser = userService.addUser(name);
-    return c.json(newUser, 201);
+    const newUser = await userService.addUser(db, name);
+    return responseCreated(c, "User created successfully", newUser);
   };
 
-  getUsers = (c: Context) => {
-    const users = userService.getUsers();
-    return c.json(users);
+  getUsers = async (c: Context<{ Bindings: Env }>) => {
+    const db = getDb(c.env);
+    const users = await userService.getUsers(db);
+    return responseOK(c, "Users retrieved successfully", users);
   };
 
-  getUserById = (c: Context) => {
+  getUserById = async (c: Context<{ Bindings: Env }>) => {
+    const db = getDb(c.env);
     const id = Number(c.req.param("id"));
-    const user = userService.getUserById(id);
+    const user = await userService.getUserById(db, id);
     if (!user) {
-      return c.json({ error: "User not found" }, 404);
+      return responseNotFound(c, "User not found");
     }
-    return c.json(user);
+    return responseOK(c, "User retrieved successfully", user);
   };
 
-  updateUser = async (c: Context) => {
+  updateUser = async (c: Context<{ Bindings: Env }>) => {
+    const db = getDb(c.env);
     const id = Number(c.req.param("id"));
     const { name } = await c.req.json();
-    const updatedUser = userService.updateUser(id, name);
+    const updatedUser = await userService.updateUser(db, id, name);
     if (!updatedUser) {
-      return c.json({ error: "User not found" }, 404);
+      return responseNotFound(c, "User not found");
     }
-    return c.json(updatedUser);
+    return responseOK(c, "User updated successfully", updatedUser);
   };
 
-  removeUser = (c: Context) => {
+  removeUser = async (c: Context<{ Bindings: Env }>) => {
+    const db = getDb(c.env);
     const id = Number(c.req.param("id"));
-    userService.removeUser(id);
-    return c.json({ message: "User removed" });
+    await userService.removeUser(db, id);
+    return responseOK(c, "User removed successfully");
   };
 }
 

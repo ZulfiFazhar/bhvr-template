@@ -1,42 +1,46 @@
+import { eq } from "drizzle-orm";
+import { usersTable } from "../../database/schema";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+
 type User = {
   id: number;
   name: string;
 };
 
 class UserRepository {
-  private data: User[] = [];
-
-  getAll(): User[] {
-    return this.data;
+  async getAll(db: DrizzleD1Database): Promise<User[]> {
+    return await db.select().from(usersTable);
   }
 
-  findById(id: number): User | undefined {
-    return this.data.find((user) => user.id === id);
+  async findById(db: DrizzleD1Database, id: number): Promise<User | undefined> {
+    const result = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, id));
+    return result[0];
   }
 
-  add(user: User): User {
-    this.data.push(user);
-    return user;
+  async add(db: DrizzleD1Database, name: string): Promise<User> {
+    const result = await db.insert(usersTable).values({ name }).returning();
+    return result[0];
   }
 
-  update(id: number, name: string): User | null {
-    const user = this.data.find((user) => user.id === id);
-    if (user) {
-      user.name = name;
-      return user;
-    }
-    return null;
+  async update(
+    db: DrizzleD1Database,
+    id: number,
+    name: string,
+  ): Promise<User | null> {
+    const result = await db
+      .update(usersTable)
+      .set({ name })
+      .where(eq(usersTable.id, id))
+      .returning();
+
+    return result.length > 0 ? result[0] : null;
   }
 
-  remove(id: number): void {
-    const index = this.data.findIndex((user) => user.id === id);
-    if (index !== -1) {
-      this.data.splice(index, 1);
-    }
-  }
-
-  count(): number {
-    return this.data.length;
+  async remove(db: DrizzleD1Database, id: number): Promise<void> {
+    await db.delete(usersTable).where(eq(usersTable.id, id));
   }
 }
 
